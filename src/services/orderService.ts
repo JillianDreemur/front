@@ -2,7 +2,7 @@ import type { CartItem, Order } from "../types";
 
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true";
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:49816";
 
 const MOCK_ORDERS: Order[] = [];
 

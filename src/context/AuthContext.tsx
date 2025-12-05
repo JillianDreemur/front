@@ -14,22 +14,35 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Verifica se há token salvo ao carregar
+  // Verifica se há token salvo ao carregar e valida com a API
   useEffect(() => {
-    const savedToken = localStorage.getItem("authToken");
-    const savedUser = localStorage.getItem("authUser");
+    const validateStoredToken = async () => {
+      const savedToken = localStorage.getItem("authToken");
+      const savedUser = localStorage.getItem("authUser");
 
-    if (savedToken && savedUser) {
-      try {
-        const parsedUser = JSON.parse(savedUser);
-        setToken(savedToken);
-        setUser(parsedUser);
-      } catch {
-        localStorage.removeItem("authToken");
-        localStorage.removeItem("authUser");
+      if (savedToken && savedUser) {
+        try {
+          // Valida o token com a API
+          const user = await authService.validateToken(savedToken);
+          if (user) {
+            setToken(savedToken);
+            setUser(user);
+            localStorage.setItem("authUser", JSON.stringify(user));
+          } else {
+            // Token inválido, limpa o storage
+            localStorage.removeItem("authToken");
+            localStorage.removeItem("authUser");
+          }
+        } catch {
+          // Erro na validação, limpa o storage
+          localStorage.removeItem("authToken");
+          localStorage.removeItem("authUser");
+        }
       }
-    }
-    setIsLoading(false);
+      setIsLoading(false);
+    };
+
+    validateStoredToken();
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
@@ -68,48 +81,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     localStorage.removeItem("authUser");
   }, []);
 
-  const loginWithGitHub = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      await authService.loginWithGitHub();
-      // Se estiver em modo mock, fazer login automático
-      if (import.meta.env.VITE_USE_MOCK === "true") {
-        const response = await authService.handleGitHubCallback("");
-        setUser(response.user);
-        setToken(response.token);
-        localStorage.setItem("authToken", response.token);
-        localStorage.setItem("authUser", JSON.stringify(response.user));
-      }
-      // Se não estiver em modo mock, o redirecionamento já foi feito
-    } catch (error) {
-      setIsLoading(false);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  const loginWithGoogle = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      await authService.loginWithGoogle();
-      // Se estiver em modo mock, fazer login automático
-      if (import.meta.env.VITE_USE_MOCK === "true") {
-        const response = await authService.handleGoogleCallback("");
-        setUser(response.user);
-        setToken(response.token);
-        localStorage.setItem("authToken", response.token);
-        localStorage.setItem("authUser", JSON.stringify(response.user));
-      }
-      // Se não estiver em modo mock, o redirecionamento já foi feito
-    } catch (error) {
-      setIsLoading(false);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
   return (
     <AuthContext.Provider
       value={{
@@ -120,8 +91,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         login,
         register,
         logout,
-        loginWithGitHub,
-        loginWithGoogle,
       }}
     >
       {children}

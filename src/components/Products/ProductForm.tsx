@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { Product, ProductFormData } from "../../types";
 
+// ESQUEMA SIMPLIFICADO: Apenas campos suportados pelo Back-end (ProductRequest DTO)
 const productSchema = z.object({
   name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
   description: z
@@ -11,27 +12,14 @@ const productSchema = z.object({
     .min(10, "Descrição deve ter pelo menos 10 caracteres"),
   price: z.number().min(0.01, "Preço deve ser maior que zero"),
   stock: z.number().int().min(0, "Estoque não pode ser negativo"),
-  category: z.string().min(1, "Selecione uma categoria"),
-  image: z.string().url("URL da imagem inválida").or(z.string().length(0)),
 });
 
 interface ProductFormProps {
   product?: Product | null;
-  onSubmit: (data: ProductFormData) => Promise<void>;
+  onSubmit: (data: ProductFormData) => Promise<void>; // Sem 'Product' como tipo de retorno
   onCancel: () => void;
   isLoading?: boolean;
 }
-
-const CATEGORIES = [
-  "Eletrônicos",
-  "Periféricos",
-  "Monitores",
-  "Áudio",
-  "Acessórios",
-  "Games",
-  "Software",
-  "Outros",
-];
 
 export const ProductForm = ({
   product,
@@ -51,16 +39,12 @@ export const ProductForm = ({
           description: product.description,
           price: product.price,
           stock: product.stock,
-          category: product.category,
-          image: product.image,
         }
       : {
           name: "",
           description: "",
           price: 0,
           stock: 0,
-          category: "",
-          image: "",
         },
   });
 
@@ -163,52 +147,6 @@ export const ProductForm = ({
                 </p>
               )}
             </div>
-          </div>
-
-          {/* Categoria */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Categoria *
-            </label>
-            <select
-              {...register("category")}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all
-                ${errors.category ? "border-red-500" : "border-gray-300"}`}
-            >
-              <option value="">Selecione uma categoria</option>
-              {CATEGORIES.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-            {errors.category && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.category.message}
-              </p>
-            )}
-          </div>
-
-          {/* URL da Imagem */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              URL da Imagem
-            </label>
-            <input
-              {...register("image")}
-              type="url"
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all
-                ${errors.image ? "border-red-500" : "border-gray-300"}`}
-              placeholder="https://exemplo.com/imagem.jpg"
-            />
-            {errors.image && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.image.message}
-              </p>
-            )}
-            <p className="text-gray-400 text-xs mt-1">
-              Deixe em branco para usar imagem padrão
-            </p>
           </div>
 
           {/* Botões */}
