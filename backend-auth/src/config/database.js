@@ -13,7 +13,6 @@ const pool = new Pool({
   password: process.env.DB_PASSWORD || '5555',
 });
 
-// Testa a conexão
 pool.on('connect', () => {
   console.log('✅ Conectado ao PostgreSQL');
 });

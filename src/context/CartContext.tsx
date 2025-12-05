@@ -16,7 +16,6 @@ interface CartProviderProps {
 
 export const CartProvider = ({ children }: CartProviderProps) => {
   const [items, setItems] = useState<CartItem[]>(() => {
-    // Recupera carrinho salvo no localStorage
     const savedCart = localStorage.getItem("cart");
     if (savedCart) {
       try {
@@ -28,7 +27,6 @@ export const CartProvider = ({ children }: CartProviderProps) => {
     return [];
   });
 
-  // Salva carrinho no localStorage quando muda
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(items));
   }, [items]);

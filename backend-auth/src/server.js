@@ -9,14 +9,12 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middlewares
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
   credentials: true,
 }));
 app.use(express.json());
 
-// Testa conexão com o banco
 app.get('/health', async (req, res) => {
   try {
     await pool.query('SELECT 1');
@@ -26,10 +24,8 @@ app.get('/health', async (req, res) => {
   }
 });
 
-// Rotas
 app.use('/auth', authRoutes);
 
-// Rota raiz
 app.get('/', (req, res) => {
   res.json({
     message: 'Auth Service API',
@@ -43,7 +39,6 @@ app.get('/', (req, res) => {
   });
 });
 
-// Inicia o servidor
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
   console.log(`📡 Health check: http://localhost:${PORT}/health`);

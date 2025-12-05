@@ -7,7 +7,6 @@ async function migrate() {
   try {
     console.log('🔄 Iniciando migração do banco de dados...');
 
-    // Cria a tabela de usuários
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -22,19 +21,16 @@ async function migrate() {
 
     console.log('✅ Tabela users criada');
 
-    // Cria índice para email
     await pool.query(`
       CREATE INDEX IF NOT EXISTS idx_users_email ON users(email)
     `);
 
     console.log('✅ Índice criado');
 
-    // Verifica se já existem usuários padrão
     const result = await pool.query('SELECT COUNT(*) FROM users');
     const count = parseInt(result.rows[0].count);
 
     if (count === 0) {
-      // Insere usuários padrão (senha: senha123)
       const bcrypt = await import('bcryptjs');
       const hashedPassword1 = await bcrypt.default.hash('senha123', 10);
       const hashedPassword2 = await bcrypt.default.hash('senha123', 10);

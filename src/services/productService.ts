@@ -89,17 +89,16 @@ export const productService = {
       const response = await fetch(`${API_BASE_URL}/api/products`);
       if (!response.ok) throw new Error("Erro ao buscar produtos");
       const products: any[] = await response.json();
-      // Converter ProductResponse para Product
       return products.map((p) => ({
         id: String(p.id),
         name: p.name,
         description: p.description || "",
         price: Number(p.price),
         stock: p.quantity || 0,
-        sellerId: "1", // TODO: obter do backend quando houver autenticação
-        sellerName: "Vendedor", // TODO: obter do backend quando houver autenticação
-        image: `https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&sig=${p.id}`, // Imagem placeholder
-        category: "Geral", // TODO: obter do backend quando houver categoria
+        sellerId: "1",
+        sellerName: "Vendedor",
+        image: `https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&sig=${p.id}`,
+        category: "Geral",
       }));
     }
   },
@@ -117,7 +116,6 @@ export const productService = {
       const response = await fetch(`${API_BASE_URL}/api/products/${id}`);
       if (!response.ok) throw new Error("Produto não encontrado");
       const p: any = await response.json();
-      // Converter ProductResponse para Product
       return {
         id: String(p.id),
         name: p.name,
@@ -143,7 +141,6 @@ export const productService = {
         }, 500);
       });
     } else {
-      // Por enquanto, retorna todos os produtos (backend não tem endpoint específico para vendedor)
       const response = await fetch(`${API_BASE_URL}/api/products`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -176,12 +173,11 @@ export const productService = {
         }, 500);
       });
     } else {
-      // Converter Product para ProductRequest
       const productRequest = {
         name: product.name,
         description: product.description,
         price: product.price,
-        skuCode: `SKU-${Date.now()}`, // Gerar SKU único
+        skuCode: `SKU-${Date.now()}`,
         quantity: product.stock,
       };
       const response = await fetch(`${API_BASE_URL}/api/products`, {
@@ -197,7 +193,6 @@ export const productService = {
         throw new Error(error || "Erro ao criar produto");
       }
       const p: any = await response.json();
-      // Converter ProductResponse para Product
       return {
         id: String(p.id),
         name: p.name,
@@ -230,13 +225,11 @@ export const productService = {
         }, 500);
       });
     } else {
-      // Converter Product parcial para ProductRequest
       const productRequest: any = {};
       if (product.name) productRequest.name = product.name;
       if (product.description) productRequest.description = product.description;
       if (product.price !== undefined) productRequest.price = product.price;
       if (product.stock !== undefined) productRequest.quantity = product.stock;
-      // Manter skuCode existente (não atualizar)
       
       const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
         method: "PUT",
@@ -250,7 +243,6 @@ export const productService = {
         const error = await response.text();
         throw new Error(error || "Erro ao atualizar produto");
       }
-      // Buscar produto atualizado
       return productService.getById(id);
     }
   },
@@ -291,7 +283,6 @@ export const productService = {
         }, 300);
       });
     } else {
-      // Por enquanto, buscar todos e filtrar no frontend (backend não tem filtro por categoria)
       const allProducts = await this.getAll();
       return allProducts.filter((p) =>
         p.category.toLowerCase().includes(category.toLowerCase())
@@ -310,7 +301,6 @@ export const productService = {
         }, 300);
       });
     } else {
-      // Por enquanto, buscar todos e filtrar no frontend (backend não tem busca por nome)
       const allProducts = await this.getAll();
       return allProducts.filter((p) =>
         p.name.toLowerCase().includes(name.toLowerCase())

@@ -1,6 +1,5 @@
 import type { User } from "../types";
 
-// URL da API de autenticação (backend com PostgreSQL)
 const AUTH_API_URL =
   import.meta.env.VITE_AUTH_API_URL || "http://localhost:3001";
 

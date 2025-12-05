@@ -27,7 +27,6 @@ export const RoleBasedRoute = ({
   }
 
   if (user.role !== requiredRole) {
-    // Redireciona para a página apropriada com base no role
     const redirectPath = user.role === "VENDEDOR" ? "/seller" : "/store";
     return <Navigate to={redirectPath} replace />;
   }

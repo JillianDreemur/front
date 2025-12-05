@@ -8,7 +8,6 @@ const HomePage = () => {
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
-  // Redireciona usuários logados para suas respectivas áreas
   useEffect(() => {
     if (isAuthenticated && user) {
       if (user.role === "VENDEDOR") {

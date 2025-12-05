@@ -19,7 +19,6 @@ const OrdersPage = () => {
       setIsLoading(true);
       try {
         const data = await orderService.getByUserId(user.id, token);
-        // Ordena por data mais recente
         data.sort(
           (a, b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()

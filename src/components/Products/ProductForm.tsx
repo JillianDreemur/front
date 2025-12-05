@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { Product, ProductFormData } from "../../types";
 
-// ESQUEMA SIMPLIFICADO: Apenas campos suportados pelo Back-end (ProductRequest DTO)
 const productSchema = z.object({
   name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
   description: z

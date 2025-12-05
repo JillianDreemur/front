@@ -37,7 +37,6 @@ const ProductPage = () => {
         const data = await productService.getById(productId);
         setProduct(data);
 
-        // Carregar produtos relacionados (mesma categoria)
         const allProducts = await productService.getAll();
         const related = allProducts
           .filter((p) => p.category === data.category && p.id !== productId)

@@ -48,7 +48,6 @@ const StoreFront = () => {
   const filterProducts = () => {
     let filtered = [...products];
 
-    // Filtrar por busca
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
@@ -58,12 +57,10 @@ const StoreFront = () => {
       );
     }
 
-    // Filtrar por categoria
     if (selectedCategory !== "Todos") {
       filtered = filtered.filter((p) => p.category === selectedCategory);
     }
 
-    // Ordenar
     switch (sortBy) {
       case "price-asc":
         filtered.sort((a, b) => a.price - b.price);

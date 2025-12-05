@@ -29,13 +29,10 @@ export const orderService = {
         }, 800);
       });
     } else {
-      // Converter CartItem[] para OrderLineItemsDto[]
-      // O backend espera: { id: productId, skuCode: null, price: null, quantity: number }
-      // O backend preencherá skuCode e price após buscar o produto
       const orderLineItems = items.map((item) => ({
-        id: Number(item.productId), // productId como Long
-        skuCode: null, // Será preenchido pelo backend
-        price: null, // Será preenchido pelo backend
+        id: Number(item.productId),
+        skuCode: null,
+        price: null,
         quantity: item.quantity,
       }));
 
@@ -58,9 +55,6 @@ export const orderService = {
       }
       
       const responseText = await response.text();
-      // O backend retorna apenas uma string "Pedido realizado com sucesso"
-      // Precisamos buscar o pedido criado ou retornar um objeto mockado
-      // Por enquanto, vamos retornar um objeto com os dados do pedido
       const orderNumber = `ORD-${Date.now()}`;
       return {
         id: orderNumber,
@@ -82,14 +76,11 @@ export const orderService = {
         }, 500);
       });
     } else {
-      // O backend não tem endpoint para buscar por userId, então buscamos todos
       const response = await fetch(`${API_BASE_URL}/api/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error("Erro ao buscar pedidos");
       const orders: any[] = await response.json();
-      // Converter OrderResponse[] para Order[]
-      // Nota: O backend não retorna userId, então assumimos que todos são do usuário
       return orders.map((o) => ({
         id: o.orderNumber || String(o.id),
         userId,
@@ -129,16 +120,14 @@ export const orderService = {
         }, 300);
       });
     } else {
-      // O backend busca por orderNumber, não por id
       const response = await fetch(`${API_BASE_URL}/api/orders/${orderId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) throw new Error("Pedido não encontrado");
       const o: any = await response.json();
-      // Converter OrderResponse para Order
       return {
         id: o.orderNumber || String(o.id),
-        userId: "", // O backend não retorna userId
+        userId: "",
         items: o.items?.map((item: any) => ({
           productId: String(item.id || ""),
           quantity: item.quantity,
@@ -183,7 +172,6 @@ export const orderService = {
         }, 500);
       });
     } else {
-      // O backend não tem endpoint para atualizar status, então retornamos o pedido atual
       const order = await this.getById(orderId, token);
       return { ...order, status };
     }

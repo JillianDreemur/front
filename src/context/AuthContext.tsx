@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Verifica se há token salvo ao carregar e valida com a API
   useEffect(() => {
     const validateStoredToken = async () => {
       const savedToken = localStorage.getItem("authToken");
@@ -22,19 +21,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (savedToken && savedUser) {
         try {
-          // Valida o token com a API
           const user = await authService.validateToken(savedToken);
           if (user) {
             setToken(savedToken);
             setUser(user);
             localStorage.setItem("authUser", JSON.stringify(user));
           } else {
-            // Token inválido, limpa o storage
             localStorage.removeItem("authToken");
             localStorage.removeItem("authUser");
           }
         } catch {
-          // Erro na validação, limpa o storage
           localStorage.removeItem("authToken");
           localStorage.removeItem("authUser");
         }
